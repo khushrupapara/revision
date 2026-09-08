@@ -1,4 +1,4 @@
-# Prompt Engineering, Prompt Tuning & Fine-Tuning --- Updated 2026 Revision Notes
+# Prompt Engineering, Prompt Tuning & Fine-Tuning 
 
 > **Purpose:** Exam/interview-ready notes covering prompt engineering,
 > prompt tuning, PEFT, LoRA/QLoRA, supervised fine-tuning, preference
