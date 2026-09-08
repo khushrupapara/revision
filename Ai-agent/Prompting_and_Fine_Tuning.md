@@ -4,36 +4,20 @@
 > prompt tuning, PEFT, LoRA/QLoRA, supervised fine-tuning, preference
 > optimization, and RAG.
 
-------------------------------------------------------------------------
+---
 
 ## 1. The Big Picture
 
 There are several ways to adapt an LLM for a task:
 
-  -----------------------------------------------------------------------------
-  Method            What changes?           Base model        Typical effort
-                                            weights?          
-  ----------------- ----------------------- ----------------- -----------------
-  **Prompt          Human-written           No                Very low
-  Engineering**     input/context                             
-
-  **In-Context      Examples/instructions   No                Low
-  Learning (ICL)**  placed in the context                     
-
-  **Prompt Tuning** Learned soft-prompt     Usually frozen    Low compute
-                    parameters                                compared with
-                                                              full fine-tuning
-
-  **PEFT / LoRA**   Small trainable adapter Usually frozen    Medium
-                    parameters                                
-
-  **Full            Model parameters        Yes               High
-  Fine-Tuning**                                               
-
-  **RAG**           External information    No                Low--Medium
-                    retrieved at inference                    
-                    time                                      
-  -----------------------------------------------------------------------------
+| Method | What changes? | Base model weights? | Typical effort |
+|---|---|---|---|
+| **Prompt Engineering** | Human-written input/context | No | Very low |
+| **In-Context Learning (ICL)** | Examples/instructions placed in the context | No | Low |
+| **Prompt Tuning** | Learned soft-prompt parameters | Usually frozen | Low compute compared with full fine-tuning |
+| **PEFT / LoRA** | Small trainable adapter parameters | Usually frozen | Medium |
+| **Full Fine-Tuning** | Model parameters | Yes | High |
+| **RAG** | External information retrieved at inference time | No | Low–Medium |
 
 ### Key distinction
 
@@ -46,7 +30,7 @@ There are several ways to adapt an LLM for a task:
 -   **RAG:** adds retrieved external knowledge to the model's context;
     it does not itself retrain the model.
 
-------------------------------------------------------------------------
+---
 
 # 2. Prompt Engineering
 
@@ -120,7 +104,7 @@ Separate instructions, data, and examples clearly.
 -   Complex tasks may require iteration
 -   Prompt behavior can vary across models
 
-------------------------------------------------------------------------
+---
 
 # 3. In-Context Learning (ICL)
 
@@ -153,7 +137,7 @@ ICL does **not** mean the model permanently learns the examples.
 The examples affect the current context, not the model's stored
 parameters.
 
-------------------------------------------------------------------------
+---
 
 # 4. Prompt Tuning
 
@@ -212,7 +196,7 @@ the part being optimized.
 -   **P-Tuning** --- uses trainable prompt representations/encoders.
 -   Other PEFT prompt-based approaches also exist.
 
-------------------------------------------------------------------------
+---
 
 # 5. Parameter-Efficient Fine-Tuning (PEFT)
 
@@ -256,7 +240,7 @@ Input → Model ───┤
 -   P-Tuning
 -   Other adapter-based methods
 
-------------------------------------------------------------------------
+---
 
 # 6. LoRA --- Low-Rank Adaptation
 
@@ -310,7 +294,7 @@ Higher rank generally means:
 -   potentially more adaptation capacity
 -   potentially higher memory/storage cost
 
-------------------------------------------------------------------------
+---
 
 # 7. QLoRA
 
@@ -339,7 +323,7 @@ of larger models more accessible on limited hardware.
 -   **QLoRA:** LoRA-style adaptation combined with quantized base-model
     weights.
 
-------------------------------------------------------------------------
+---
 
 # 8. Fine-Tuning
 
@@ -376,7 +360,7 @@ Examples include:
 -   Prompt tuning
 -   Prefix tuning
 
-------------------------------------------------------------------------
+---
 
 # 9. Supervised Fine-Tuning (SFT)
 
@@ -419,7 +403,7 @@ SQL injection occurs when...
 -   style consistency
 -   specialized response patterns
 
-------------------------------------------------------------------------
+---
 
 # 10. Preference Optimization and RLHF
 
@@ -480,7 +464,7 @@ Prompt
 -   **DPO:** directly optimizes preference data using a simpler
     objective than classic RLHF.
 
-------------------------------------------------------------------------
+---
 
 # 11. Catastrophic Forgetting
 
@@ -495,7 +479,7 @@ This is one reason evaluation should test both:
 PEFT can reduce the amount of base-model modification, but it does not
 automatically eliminate every adaptation risk.
 
-------------------------------------------------------------------------
+---
 
 # 12. RAG --- Retrieval-Augmented Generation
 
@@ -531,22 +515,13 @@ Use RAG when:
 
 ## RAG vs Fine-Tuning
 
-  -----------------------------------------------------------------------
-                          RAG                     Fine-Tuning
-  ----------------------- ----------------------- -----------------------
-  Main purpose            Provide                 Change
-                          knowledge/context       behavior/capability
-
-  Updates                 Easy to update          Requires training
-                          documents               
-
-  External knowledge      Retrieved at runtime    Learned during training
-
-  Good for changing facts Yes                     Usually not ideal
-
-  Good for consistent     Limited                 Stronger
-  behavior/style                                  
-  -----------------------------------------------------------------------
+| Feature | RAG | Fine-Tuning |
+|---|---|---|
+| **Main purpose** | Provide knowledge/context | Change behavior/capability |
+| **Updates** | Easy to update documents | Requires training |
+| **External knowledge** | Retrieved at runtime | Learned during training |
+| **Good for changing facts** | Yes | Usually not ideal |
+| **Good for consistent behavior/style** | Limited | Stronger |
 
 ### Important
 
@@ -554,36 +529,21 @@ RAG does **not** automatically teach the model new permanent knowledge.
 
 It supplies relevant information during inference.
 
-------------------------------------------------------------------------
+---
 
 # 13. Full Comparison
 
-  -------------------------------------------------------------------------------------------
-  Feature       Prompt        Prompt Tuning LoRA / PEFT      Full          RAG
-                Engineering                                  Fine-Tuning   
-  ------------- ------------- ------------- ---------------- ------------- ------------------
-  Changes base  No            No            Usually no       Yes           No
-  weights?                                                                 
+| Feature | Prompt Engineering | Prompt Tuning | LoRA / PEFT | Full Fine-Tuning | RAG |
+|---|---|---|---|---|---|
+| **Changes base weights?** | No | No | Usually no | Yes | No |
+| **Training required?** | No | Yes | Yes | Yes | No model training required |
+| **Uses learned parameters?** | No | Yes | Yes | Yes | No |
+| **Main goal** | Control output | Efficient task adaptation | Efficient model adaptation | Deep adaptation | Ground answers in external data |
+| **Cost** | Very low | Low–Medium | Low–Medium | High | Low–Medium |
+| **Flexibility** | High | Medium | High | Medium | High |
+| **Best for** | Fast-changing tasks | Learned task prompts | Efficient specialization | Major adaptation | Changing/private knowledge |
 
-  Training      No            Yes           Yes              Yes           No model training
-  required?                                                                required
-
-  Uses learned  No            Yes           Yes              Yes           No
-  parameters?                                                              
-
-  Main goal     Control       Efficient     Efficient model  Deep          Ground answers in
-                output        task          adaptation       adaptation    external data
-                              adaptation                                   
-
-  Cost          Very low      Low--Medium   Low--Medium      High          Low--Medium
-
-  Flexibility   High          Medium        High             Medium        High
-
-  Best for      Fast changing Learned task  Efficient        Major         Changing/private
-                tasks         prompts       specialization   adaptation    knowledge
-  -------------------------------------------------------------------------------------------
-
-------------------------------------------------------------------------
+---
 
 # 14. When to Use Which?
 
@@ -621,7 +581,7 @@ It supplies relevant information during inference.
 -   Answers need grounding in external sources.
 -   You want to update knowledge without retraining the model.
 
-------------------------------------------------------------------------
+---
 
 # 15. Decision Tree
 
@@ -648,7 +608,7 @@ Do you need to change the model?
                       └── Full Fine-Tuning
 ```
 
-------------------------------------------------------------------------
+---
 
 # 16. Common Interview Traps
 
@@ -706,25 +666,25 @@ Both can use preference data for alignment, but DPO uses a direct
 preference-optimization objective rather than the classic reward-model +
 reinforcement-learning pipeline.
 
-------------------------------------------------------------------------
+---
 
 # 17. Quick Memory Table
 
-  Concept              Remember it as
-  -------------------- ---------------------------------------------
-  Prompt Engineering   **Write better instructions**
-  ICL                  **Show examples in context**
-  Prompt Tuning        **Learn soft prompts**
-  PEFT                 **Train a small part**
-  LoRA                 **Train low-rank adapters**
-  QLoRA                **Quantization + LoRA**
-  SFT                  **Learn from desired answers**
-  RLHF                 **Optimize from human preferences with RL**
-  DPO                  **Direct preference optimization**
-  RAG                  **Retrieve knowledge at runtime**
-  Full Fine-Tuning     **Update most/all model parameters**
+| Concept | Remember it as |
+|---|---|
+| **Prompt Engineering** | **Write better instructions** |
+| **ICL** | **Show examples in context** |
+| **Prompt Tuning** | **Learn soft prompts** |
+| **PEFT** | **Train a small part** |
+| **LoRA** | **Train low-rank adapters** |
+| **QLoRA** | **Quantization + LoRA** |
+| **SFT** | **Learn from desired answers** |
+| **RLHF** | **Optimize from human preferences with RL** |
+| **DPO** | **Direct preference optimization** |
+| **RAG** | **Retrieve knowledge at runtime** |
+| **Full Fine-Tuning** | **Update most/all model parameters** |
 
-------------------------------------------------------------------------
+---
 
 # 18. Core Takeaways --- Exam Ready
 
@@ -751,7 +711,7 @@ reinforcement-learning pipeline.
 12. Choose the method based on **task requirements, data, compute, cost,
     update frequency, and desired behavior**.
 
-------------------------------------------------------------------------
+---
 
 ## 19. One-Line Mental Model
 
