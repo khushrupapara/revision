@@ -100,9 +100,22 @@ Official OpenAI documentation
 
 ## Quick Memory
 
+```
+from praisonaiagents import Agent
+from praisonaiagents.tools import duckduckgo
+
+agent = Agent(
+    name="WebSearcher",
+    instructions="Search the web and summarize the findings.",
+    tools=[duckduckgo]
+)
+
+result = agent.start("What are the latest AI developments?")
+print(result)
+
 ```text
 Web Search → Find fresh information from the internet
 Search Query → Question sent to the search engine
 Search Results → Webpages returned by the search engine
-Source → Information used to support the answer
+```
 ```
